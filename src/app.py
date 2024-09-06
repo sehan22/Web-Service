@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def root():
-  # Implement health check logic
+  # Implement root logic
   return jsonify({"message": "Coinbase server"})
 
 @app.route("/health")
