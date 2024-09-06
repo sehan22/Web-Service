@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coinbase-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: coinbase-service
+  template:
+    metadata:
+      labels:
+        app: coinbase-service
+    spec:
+      containers:
+        - name: coinbase-service
+          image: coinbase-service:latest
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: coinbase-data
