@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build Auth Service') {
+            steps {
+                script {
+                    docker.build("auth-service", "../services/auth-service")
+                }
+            }
+        }
+
+        stage('Build Transaction Service') {
+            steps {
+                script {
+                    docker.build("transaction-service", "../services/transaction-service")
+                }
+            }
+        }
+
+        stage('Build Monitoring Service') {
+            steps {
+                script {
+                    docker.build("monitoring-service", "../services/monitoring-service")
+                }
+            }
+        }
+
+        stage('Build Notification Service') {
+            steps {
+                script {
+                    docker.build("notification-service", "../services/notification-service")
+                }
+            }
+        }
+    }
+}
