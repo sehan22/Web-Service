@@ -1,0 +1,19 @@
+pipeline:
+  agent: any
+  stages:
+    - build
+    - test
+    - deploy
+docker:
+  registry: "https://your-docker-registry"
+  credentialsId: "your-credentials-id"
+  images:
+    - auth-service
+    - transaction-service
+    - monitoring-service
+    - notification-service
+    - api-gateway
+kubernetes:
+  namespaces:
+    - dev
+    - prod
