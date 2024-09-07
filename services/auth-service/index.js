@@ -7,7 +7,7 @@ app.use(express.json());
 
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
-  // Mock authentication
+
   if (username === "admin" && password === "password") {
     const token = jwt.sign({ username }, "secret-key", { expiresIn: "1h" });
     res.json({ token });
