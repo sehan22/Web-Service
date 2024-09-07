@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service_one-deployment
+  name: service_two-deployment
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: service_one
+      app: service_two
   template:
     metadata:
       labels:
-        app: service_one
+        app: service_two
     spec:
       containers:
-        - name: service_one
-          image: service_one:latest
+        - name: service_two
+          image: service_two:latest
           resources:
             limits:
               memory: "128Mi"
               cpu: "500m"
           ports:
-            - containerPort: 3000
+            - containerPort: 3001
