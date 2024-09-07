@@ -46,7 +46,7 @@ pipeline {
             }
         }
 
-        //Push all docker images to Docker Hub
+        //Push all docker images to Docker Hub Stage
         stage('Push to Docker Registry') {
             steps {
                 script {
@@ -62,5 +62,16 @@ pipeline {
         }
 
         //Deploy services to Kubernetes stage
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh 'kubectl apply -f auth-service/deployment.yaml -n dev'
+                    sh 'kubectl apply -f transaction-service/deployment.yaml -n dev'
+                    sh 'kubectl apply -f monitoring-service/deployment.yaml -n dev'
+                    sh 'kubectl apply -f notification-service/deployment.yaml -n dev'
+                    sh 'kubectl apply -f api-gateway-service/deployment.yaml -n dev'
+                }
+            }
+        }
     }
 }
