@@ -32,5 +32,13 @@ pipeline {
                 }
             }
         }
+
+        stage('Build API Gateway') {
+            steps {
+                script {
+                    docker.build("api-gateway", "../api-gateway/index.js")
+                }
+            }
+        }
     }
 }
