@@ -1,6 +1,7 @@
 pipeline {
     agent any
     stages {
+        // Auth service docker image build stage
         stage('Build Auth Service') {
             steps {
                 script {
@@ -9,6 +10,7 @@ pipeline {
             }
         }
 
+        // Transaction service docker image build stage
         stage('Build Transaction Service') {
             steps {
                 script {
@@ -17,6 +19,7 @@ pipeline {
             }
         }
 
+        // Monitoring service docker image build stage
         stage('Build Monitoring Service') {
             steps {
                 script {
@@ -25,6 +28,7 @@ pipeline {
             }
         }
 
+        // Notification service docker image build stage
         stage('Build Notification Service') {
             steps {
                 script {
@@ -33,6 +37,7 @@ pipeline {
             }
         }
 
+        // API Gateway docker image build stage
         stage('Build API Gateway') {
             steps {
                 script {
@@ -40,5 +45,22 @@ pipeline {
                 }
             }
         }
+
+        //Push all docker images to Docker Hub
+        stage('Push to Docker Registry') {
+            steps {
+                script {
+                    docker.withRegistry('https://your-registry-url', 'registry-credentials-id') {
+                        docker.image('auth-service').push('latest')
+                        docker.image('transaction-service').push('latest')
+                        docker.image('monitoring-service').push('latest')
+                        docker.image('auth-service').push('latest')
+                        docker.image('notification-service').push('latest')
+                    }
+                }
+            }
+        }
+
+        //Deploy services to Kubernetes stage
     }
 }
