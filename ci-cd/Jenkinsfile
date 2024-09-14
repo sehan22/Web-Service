@@ -1,0 +1,102 @@
+pipeline {
+    agent any
+    stages {
+        // Auth service docker image build stage
+        stage('Build Auth Service') {
+            steps {
+                script {
+                    docker.build("auth-service", "../services/auth-service")
+                }
+            }
+        }
+
+        // Transaction service docker image build stage
+        stage('Build Transaction Service') {
+            steps {
+                script {
+                    docker.build("transaction-service", "../services/transaction-service")
+                }
+            }
+        }
+
+        // Monitoring service docker image build stage
+        stage('Build Monitoring Service') {
+            steps {
+                script {
+                    docker.build("monitoring-service", "../services/monitoring-service")
+                }
+            }
+        }
+
+        // Notification service docker image build stage
+        stage('Build Notification Service') {
+            steps {
+                script {
+                    docker.build("notification-service", "../services/notification-service")
+                }
+            }
+        }
+
+        // API Gateway docker image build stage
+        stage('Build API Gateway') {
+            steps {
+                script {
+                    docker.build("api-gateway", "../api-gateway/index.js")
+                }
+            }
+        }
+
+        //Push all docker images to Docker Hub Stage
+        stage('Push to Docker Registry') {
+            steps {
+                script {
+                    docker.withRegistry('https://your-registry-url', 'registry-credentials-id') {
+                        docker.image('auth-service').push('latest')
+                        docker.image('transaction-service').push('latest')
+                        docker.image('monitoring-service').push('latest')
+                        docker.image('auth-service').push('latest')
+                        docker.image('notification-service').push('latest')
+                    }
+                }
+            }
+        }
+
+        //Deploy services to Kubernetes stage
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh 'kubectl apply -f auth-service/deployment.yaml -n dev'
+                    sh 'kubectl apply -f transaction-service/deployment.yaml -n dev'
+                    sh 'kubectl apply -f monitoring-service/deployment.yaml -n dev'
+                    sh 'kubectl apply -f notification-service/deployment.yaml -n dev'
+                    sh 'kubectl apply -f api-gateway-service/deployment.yaml -n dev'
+                }
+            }
+        }
+
+        // Blue-Green Deployment to production stage
+        stage('Blue-Green Deployment') {
+            steps {
+                script {
+                    sh 'kubectl apply -f ci-cd/blue-green-deploy.yaml -n prod'
+                }
+            }
+        }
+
+        //Run test after deployment stage
+        stage('Run Tests') {
+            steps {
+                script {
+                    sh 'kubectl apply -f test/test-deployment.yaml'
+                    sh 'kubectl run'
+                }
+            }
+        }
+    }
+
+     post {
+        always {
+            cleanWs()
+        }
+    }
+}

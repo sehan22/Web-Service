@@ -1,0 +1,46 @@
+version: "3"
+services:
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "3000:3000"
+    networks:
+      - coinbase-net
+
+  transaction-service:
+    build: ./transaction-service
+    ports:
+      - "3001:3001"
+    networks:
+      - coinbase-net
+
+  monitoring-service:
+    build: ./monitoring-service
+    ports:
+      - "3002:3002"
+    networks:
+      - coinbase-net
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "3003:3003"
+    networks:
+      - coinbase-net
+
+  database:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: coinbase
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+    networks:
+      - coinbase-net
+
+networks:
+  coinbase-net:
+    driver: bridge

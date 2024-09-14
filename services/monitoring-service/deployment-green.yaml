@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-service-green
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: monitoring-service
+      version: green
+  template:
+    metadata:
+      labels:
+        app: monitoring-service
+        version: green
+    spec:
+      containers:
+        - name: monitoring-service
+          image: monitoring-service:latest
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3001

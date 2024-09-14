@@ -1,5 +1,0 @@
-flask
-gunicorn
-kubernetes
-pytest
-# Add other required packages as needed
