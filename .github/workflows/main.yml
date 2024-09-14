@@ -21,14 +21,14 @@ jobs:
 
       - name: Build Docker Images for Services
         run: |
-          docker build -t your-dockerhub-repo/auth-service ./auth-service
-          docker build -t your-dockerhub-repo/transaction-service ./transaction-service
-          docker build -t your-dockerhub-repo/monitoring-service ./monitoring-service
-          docker build -t your-dockerhub-repo/notification-service ./notification-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/auth-service ./auth-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/transaction-service ./transaction-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/monitoring-service ./monitoring-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service ./notification-service
 
       - name: Push Docker Images to Docker Hub
         run: |
-          docker push your-dockerhub-repo/auth-service
-          docker push your-dockerhub-repo/transaction-service
-          docker push your-dockerhub-repo/monitoring-service
-          docker push your-dockerhub-repo/notification-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/transaction-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/monitoring-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/notification-service
