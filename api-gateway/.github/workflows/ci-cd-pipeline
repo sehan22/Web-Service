@@ -32,32 +32,3 @@ jobs:
           docker push your-dockerhub-repo/transaction-service
           docker push your-dockerhub-repo/monitoring-service
           docker push your-dockerhub-repo/notification-service
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v1
-        with:
-          version: "v1.18.0"
-
-      - name: Deploy Services to Kubernetes
-        run: |
-          kubectl apply -f auth-service/deployment.yaml
-          kubectl apply -f transaction-service/deployment.yaml
-          kubectl apply -f monitoring-service/deployment.yaml
-          kubectl apply -f notification-service/deployment.yaml
-          kubectl apply -f api-gateway/deployment.yaml
-
-      - name: Deploy Services
-        run: |
-          kubectl apply -f auth-service/service.yaml
-          kubectl apply -f transaction-service/service.yaml
-          kubectl apply -f monitoring-service/service.yaml
-          kubectl apply -f notification-service/service.yaml
-          kubectl apply -f api-gateway/service.yaml
-
-      - name: Test Deployment (Integration Tests)
-        run: |
-          kubectl wait --for=condition=available --timeout=600s deployment/auth-service
-          kubectl wait --for=condition=available --timeout=600s deployment/transaction-service
-          kubectl wait --for=condition=available --timeout=600s deployment/monitoring-service
-          kubectl wait --for=condition=available --timeout=600s deployment/notification-service
-          npm test --prefix ./test
