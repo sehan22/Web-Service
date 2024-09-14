@@ -31,6 +31,7 @@ jobs:
 
       - name: Push Docker Images to Docker Hub
         run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/services/auth-service
           docker push ${{ secrets.DOCKER_USERNAME }}/services/transaction-service
           docker push ${{ secrets.DOCKER_USERNAME }}/services/monitoring-service
