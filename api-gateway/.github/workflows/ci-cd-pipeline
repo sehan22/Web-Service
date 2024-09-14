@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,34 +14,78 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v1
 
-      - name: Log in to Docker Hub
+      - name: Log in to DockerHub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build and push Docker images
+      - name: Build and push Docker image
         run: |
-          services=("api-gateway" "account-management" "wallet" "trading")
-          for service in "${services[@]}"; do
-            docker build -f ./$service/Dockerfile -t your-dockerhub-username/$service:latest ./$service
-            docker push your-dockerhub-username/$service:latest
-          done
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/crypto-exchange-service:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/crypto-exchange-service:latest
 
-      - name: Set up Kubernetes CLI
-        uses: azure/setup-kubectl@v1
-        with:
-          version: "1.22.0"
 
-      - name: Deploy to Kubernetes
-        env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
-        run: |
-          echo "$KUBECONFIG" > kubeconfig.yaml
-          kubectl --kubeconfig=kubeconfig.yaml apply -f kubernetes/trading-deployment.yaml
-          kubectl --kubeconfig=kubeconfig.yaml apply -f kubernetes/wallet-deployment.yaml
-          kubectl --kubeconfig=kubeconfig.yaml apply -f kubernetes/account-management-deployment.yaml
-          kubectl --kubeconfig=kubeconfig.yaml apply -f kubernetes/api-gateway-deployment.yaml
 
-      - name: Clean up
-        run: |
-          rm -f kubeconfig.yaml
+name: CI/CD Pipeline for Coinbase Monitoring
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Build Docker Images for Services
+      run: |
+        docker build -t your-dockerhub-repo/auth-service ./auth-service
+        docker build -t your-dockerhub-repo/transaction-service ./transaction-service
+        docker build -t your-dockerhub-repo/monitoring-service ./monitoring-service
+        docker build -t your-dockerhub-repo/notification-service ./notification-service
+
+    - name: Push Docker Images to Docker Hub
+      run: |
+        docker push your-dockerhub-repo/auth-service
+        docker push your-dockerhub-repo/transaction-service
+        docker push your-dockerhub-repo/monitoring-service
+        docker push your-dockerhub-repo/notification-service
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v1
+      with:
+        version: 'v1.18.0'
+
+    - name: Deploy Blue Environment to Kubernetes
+      run: |
+        kubectl apply -f auth-service/deployment-blue.yaml
+        kubectl apply -f transaction-service/deployment-blue.yaml
+        kubectl apply -f monitoring-service/deployment-blue.yaml
+        kubectl apply -f notification-service/deployment-blue.yaml
+        kubectl apply -f api-gateway/deployment-blue.yaml
+
+    - name: Deploy Blue Environment Services
+      run: |
+        kubectl apply -f auth-service/service.yaml
+        kubectl apply -f transaction-service/service.yaml
+        kubectl apply -f monitoring-service/service.yaml
+        kubectl apply -f notification-service/service.yaml
+        kubectl apply -f api-gateway/service.yaml
+
+    - name: Test Blue Deployment (Integration Tests)
+      run: |
+        kubectl wait --for=condition=available --timeout=600s deployment/auth-service-blue
+        kubectl wait --for=condition=available --timeout=600s deployment/transaction-service-blue
+        kubectl wait --for=condition=available --timeout=600s deployment/monitoring-service-blue
+        kubectl wait --for=condition=available --timeout=600s deployment/notification-service-blue
+        npm test --prefix ./test
