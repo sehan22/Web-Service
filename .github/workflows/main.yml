@@ -22,16 +22,16 @@ jobs:
       - name: Build Docker Images for Services
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/services/auth-service ./services/auth-service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/transaction-service ./services/transaction-service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/monitoring-service ./services/monitoring-service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service ./services/notification-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/services/transaction-service ./services/transaction-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/services/monitoring-service ./services/monitoring-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/services/notification-service ./services/notification-service
 
       - name: List Docker Images
         run: docker images
 
       - name: Push Docker Images to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/services/auth-service ./services/auth-service
-          docker push ${{ secrets.DOCKER_USERNAME }}/services/transaction-service ./services/transaction-service
-          docker push ${{ secrets.DOCKER_USERNAME }}/services/monitoring-service ./services/monitoring-service
-          docker push ${{ secrets.DOCKER_USERNAME }}/services/notification-service ./services/notification-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/services/auth-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/services/transaction-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/services/monitoring-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/services/notification-service
