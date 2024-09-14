@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway-green
+  name: auth-service-green
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: api-gateway
+      app: auth-service
       version: green
   template:
     metadata:
       labels:
-        app: api-gateway
+        app: auth-service
         version: green
     spec:
       containers:
-        - name: api-gateway
-          image: api-gateway:latest
+        - name: auth-service
+          image: auth-service:latest
           resources:
             limits:
               memory: "128Mi"

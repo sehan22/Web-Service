@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway-green
+  name: monitoring-service-blue
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: api-gateway
-      version: green
+      app: monitoring-service
+      version: blue
   template:
     metadata:
       labels:
-        app: api-gateway
-        version: green
+        app: monitoring-service
+        version: blue
     spec:
       containers:
-        - name: api-gateway
-          image: api-gateway:latest
+        - name: monitoring-service
+          image: monitoring-service:latest
           resources:
             limits:
               memory: "128Mi"
               cpu: "500m"
           ports:
-            - containerPort: 3001
+            - containerPort: 3000
