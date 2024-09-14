@@ -21,10 +21,10 @@ jobs:
 
       - name: Build Docker Images for Services
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/services/auth-service .services/auth-service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/transaction-service ./transaction-service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/monitoring-service ./monitoring-service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service ./notification-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/services/auth-service ./services/auth-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/transaction-service ./services/transaction-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/monitoring-service ./services/monitoring-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service ./services/notification-service
 
       - name: Push Docker Images to Docker Hub
         run: |
